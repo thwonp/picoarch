@@ -18,6 +18,8 @@
 void plorpos_init(void);
 /* Every frame; looks at the state every 500 ms. */
 void plorpos_tick(void);
+/* Read the state again now; true when it differs from the last read. */
+bool plorpos_refresh(void);
 /* Whether music is playing, as last read. */
 bool plorpos_music_playing(void);
 const char *plorpos_title(void);

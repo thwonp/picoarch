@@ -40,6 +40,9 @@ extern "C" {
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_image.h>
 
+#ifdef PLORPOS
+#define HAS_MENU_MUSIC
+#endif
 #define HAS_MENU_VOLUME
 #define HAS_MENU_BRIGHTNESS
 #define HAS_MENU_SAVE
@@ -66,6 +69,7 @@ typedef enum{
     MENU_TYPE_EXIT,
     MENU_TYPE_POWERDOWN,
     MENU_TYPE_RO_RW,
+    MENU_TYPE_MUSIC,
     NB_MENU_TYPES,
 } ENUM_MENU_TYPE;
 

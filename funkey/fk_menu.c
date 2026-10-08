@@ -33,6 +33,9 @@
 #include "core.h"
 #include "scale.h"
 #include "plat.h"
+#ifdef PLORPOS
+#include "../plorpos.h"
+#endif
 
 extern int video_width;
 extern int video_height;
@@ -337,6 +340,14 @@ static void add_menu_zone(ENUM_MENU_TYPE menu_type)
 		SDL_BlitSurface(text_surface, NULL, surface, &text_pos);
 		break;
 #endif
+#ifdef HAS_MENU_MUSIC
+	case MENU_TYPE_MUSIC:
+		text_surface = TTF_RenderText_Blended(menu_title_font, "MUSIC", text_color);
+		text_pos.x = (surface->w - MENU_ZONE_WIDTH)/2 + (MENU_ZONE_WIDTH - text_surface->w)/2;
+		text_pos.y = surface->h - MENU_ZONE_HEIGHT/2 - text_surface->h/2 - padding_y_from_center_menu_zone;
+		SDL_BlitSurface(text_surface, NULL, surface, &text_pos);
+		break;
+#endif
 #ifdef HAS_MENU_ASPECT_RATIO
 	case MENU_TYPE_ASPECT_RATIO:
 		MENU_DEBUG_PRINTF("Init MENU_TYPE_ASPECT_RATIO\n");
@@ -431,8 +442,16 @@ static void add_menu_zone(ENUM_MENU_TYPE menu_type)
 	SDL_FreeSurface(text_surface);
 }
 
+#ifdef HAS_MENU_MUSIC
+static uint32_t music_poll_ms;
+#endif
+
 static void init_menu_zones(void)
 {
+#ifdef HAS_MENU_MUSIC
+	/* First: on plorpOS the music comes before the game. */
+	add_menu_zone(MENU_TYPE_MUSIC);
+#endif
 #ifdef HAS_MENU_VOLUME
 	add_menu_zone(MENU_TYPE_VOLUME);
 #endif
@@ -772,6 +791,35 @@ static void menu_screen_refresh(SDL_Surface *screen, int menuItem, int prevItem,
 			SDL_BlitSurface(text_surface, NULL, screen, &text_pos);
 			break;
 #endif
+#ifdef HAS_MENU_MUSIC
+		case MENU_TYPE_MUSIC: {
+			/* The track, cut to fit, and what A does: nanoshelf owns the
+			 * queue, this only asks it (plorpos.h). */
+			char name[128];
+			int w = 0, h = 0;
+			size_t n;
+
+			snprintf(name, sizeof name, "%s", plorpos_title()[0] ? plorpos_title() : "Nothing playing");
+			n = strlen(name);
+			TTF_SizeUTF8(menu_info_font, name, &w, &h);
+			while (w > MENU_ZONE_WIDTH - 16 && n > 3) {
+				do n--; while (n > 0 && (name[n] & 0xC0) == 0x80);
+				memcpy(name + n, "...", 4);
+				TTF_SizeUTF8(menu_info_font, name, &w, &h);
+			}
+			text_surface = TTF_RenderUTF8_Blended(menu_info_font, name, text_color);
+			text_pos.x = (screen->w - MENU_ZONE_WIDTH)/2 + (MENU_ZONE_WIDTH - text_surface->w)/2;
+			text_pos.y = screen->h - MENU_ZONE_HEIGHT/2 - text_surface->h/2 + padding_y_from_center_menu_zone;
+			SDL_BlitSurface(text_surface, NULL, screen, &text_pos);
+			SDL_FreeSurface(text_surface);
+			sprintf(text_tmp, "<   %s   >", plorpos_music_playing() ? "PAUSE" : "PLAY");
+			text_surface = TTF_RenderText_Blended(menu_info_font, text_tmp, text_color);
+			text_pos.x = (screen->w - MENU_ZONE_WIDTH)/2 + (MENU_ZONE_WIDTH - text_surface->w)/2;
+			text_pos.y = screen->h - MENU_ZONE_HEIGHT/2 - text_surface->h/2 + 2*padding_y_from_center_menu_zone;
+			SDL_BlitSurface(text_surface, NULL, screen, &text_pos);
+			break;
+		}
+#endif
 #ifdef HAS_MENU_ASPECT_RATIO
 		case MENU_TYPE_ASPECT_RATIO:
 			sprintf(text_tmp, "<   %s   >", aspect_ratio_name[menu_aspect_ratio]);
@@ -1094,6 +1142,12 @@ int FK_RunMenu(SDL_Surface *screen)
 					case SDLK_l:
 					case SDLK_LEFT:
 						//MENU_DEBUG_PRINTF("LEFT\n");
+#ifdef HAS_MENU_MUSIC
+						if(idx_menus[menuItem] == MENU_TYPE_MUSIC){
+							plorpos_send("prev");
+							music_poll_ms = SDL_GetTicks() - 250;
+						} else
+#endif
 #ifdef HAS_MENU_VOLUME
 						if(idx_menus[menuItem] == MENU_TYPE_VOLUME){
 							MENU_DEBUG_PRINTF("Volume DOWN\n");
@@ -1164,6 +1218,12 @@ int FK_RunMenu(SDL_Surface *screen)
 					case SDLK_r:
 					case SDLK_RIGHT:
 						//MENU_DEBUG_PRINTF("RIGHT\n");
+#ifdef HAS_MENU_MUSIC
+						if(idx_menus[menuItem] == MENU_TYPE_MUSIC){
+							plorpos_send("next");
+							music_poll_ms = SDL_GetTicks() - 250;
+						} else
+#endif
 #ifdef HAS_MENU_VOLUME
 						if(idx_menus[menuItem] == MENU_TYPE_VOLUME){
 							MENU_DEBUG_PRINTF("Volume UP\n");
@@ -1233,6 +1293,12 @@ int FK_RunMenu(SDL_Surface *screen)
 
 					case SDLK_a:
 					case SDLK_RETURN:
+#ifdef HAS_MENU_MUSIC
+						if(idx_menus[menuItem] == MENU_TYPE_MUSIC){
+							plorpos_send("toggle");
+							music_poll_ms = SDL_GetTicks() - 250;
+						} else
+#endif
 #ifdef HAS_MENU_SAVE
 						if(idx_menus[menuItem] == MENU_TYPE_SAVE){
 							if(menu_confirmation){
@@ -1452,6 +1518,14 @@ int FK_RunMenu(SDL_Surface *screen)
 			screen_refresh = 1;
 		}
 
+#ifdef HAS_MENU_MUSIC
+		/* What is playing can change under the menu - a track ends, or a
+		 * press above was answered: look again every 400 ms. */
+		if (idx_menus[menuItem] == MENU_TYPE_MUSIC && SDL_GetTicks() - music_poll_ms >= 400) {
+			music_poll_ms = SDL_GetTicks();
+			if (plorpos_refresh()) screen_refresh = 1;
+		}
+#endif
 		/// --------- Handle FPS ---------
 		cur_ms = SDL_GetTicks();
 		if(cur_ms-prev_ms < 1000/FPS_MENU){

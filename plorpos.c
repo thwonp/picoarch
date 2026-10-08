@@ -74,6 +74,16 @@ void plorpos_tick(void)
 	plat_sound_set_quiet(playing);
 }
 
+bool plorpos_refresh(void)
+{
+	bool was = playing;
+	char t[sizeof title];
+
+	snprintf(t, sizeof t, "%s", title);
+	read_now();
+	return was != playing || strcmp(t, title);
+}
+
 bool plorpos_music_playing(void) { return playing; }
 const char *plorpos_title(void) { return title; }
 const char *plorpos_artist(void) { return artist; }
