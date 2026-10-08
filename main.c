@@ -9,6 +9,9 @@
 #include "libpicofe/config_file.h"
 #include "libpicofe/input.h"
 #include "main.h"
+#ifdef PLORPOS
+#include "plorpos.h"
+#endif
 #include "menu.h"
 #include "overrides.h"
 #include "plat.h"
@@ -762,6 +765,9 @@ int main(int argc, char **argv) {
 #endif
 
 	do {
+#ifdef PLORPOS
+		plorpos_tick();
+#endif
 		count_fps();
 		adjust_audio();
 		core_run_frame();

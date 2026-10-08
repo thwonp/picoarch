@@ -28,5 +28,12 @@ unsigned plat_cpu_ticks(void);
 int plat_sound_occupancy(void);
 extern void (*plat_sound_write)(const struct audio_frame *data, int frames);
 void plat_sound_resize_buffer(void);
+#ifdef PLORPOS
+#include <stdbool.h>
+/* Close the sound device while music plays, and open it again after (see
+ * plorpos.h); the frame timer paces the game meanwhile. */
+void plat_sound_set_quiet(bool quiet);
+void plat_sound_quiet_pace(void);
+#endif
 
 #endif /* __PLAT_H__ */

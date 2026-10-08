@@ -6,6 +6,9 @@
 #include "libpicofe/plat.h"
 #include "menu.h"
 #include "plat.h"
+#ifdef PLORPOS
+#include "plorpos.h"
+#endif
 #include "scale.h"
 #include "util.h"
 
@@ -254,12 +257,21 @@ void plat_video_process(const void *data, unsigned width, unsigned height, size_
 	video_update_msg();
 }
 
+#ifdef PLORPOS
+static bool sound_open, sound_quiet;
+#endif
+
 void plat_video_flip(void)
 {
 	static uint64_t next_frame_time_us = 0;
 
 	if (frame_dirty) {
+#ifdef PLORPOS
+		/* Quiet, plat_sound_quiet_pace paces every frame instead. */
+		if (enable_drc && sound_open) {
+#else
 		if (enable_drc) {
+#endif
 			uint64_t time = plat_get_ticks_us_u64();
 
 			if (limit_frames && time < next_frame_time_us) {
@@ -349,10 +361,18 @@ static void plat_sound_finish(void)
 {
 	SDL_PauseAudio(1);
 	SDL_CloseAudio();
+	SDL_LockAudio();
 	if (audio.buf) {
 		free(audio.buf);
 		audio.buf = NULL;
 	}
+	/* So plat_sound_write does nothing rather than write into the buffer
+	 * just freed. */
+	audio.buf_len = 0;
+	SDL_UnlockAudio();
+#ifdef PLORPOS
+	sound_open = false;
+#endif
 }
 
 static int plat_sound_init(void)
@@ -383,8 +403,57 @@ static int plat_sound_init(void)
 	plat_sound_resize_buffer();
 
 	SDL_PauseAudio(0);
+#ifdef PLORPOS
+	sound_open = true;
+#endif
 	return 0;
 }
+
+#ifdef PLORPOS
+/* Every emulated frame. With the sound device closed nothing blocks the
+ * loop, and the limiter in plat_video_flip runs only on frames drawn - a core
+ * skipping frames (gpsp) ran at 300 fps quiet. So quiet, each frame waits for
+ * its time here; a loop that fell behind starts over rather than run fast to
+ * catch up. Not under fast-forward (limit_frames off). */
+void plat_sound_quiet_pace(void)
+{
+	static uint64_t next;
+	uint64_t t;
+
+	if (sound_open || !limit_frames || !frame_time) {
+		next = 0;
+		return;
+	}
+	t = plat_get_ticks_us_u64();
+	if (next && t < next && next - t < 100000) {
+		usleep(next - t);
+		t = plat_get_ticks_us_u64();
+	}
+	if (!next || t > next + 4 * (uint64_t)frame_time)
+		next = t;
+	next += frame_time;
+}
+
+void plat_sound_set_quiet(bool quiet)
+{
+	static bool failing;
+
+	sound_quiet = quiet;
+	if (quiet && sound_open) {
+		plat_sound_finish();
+		fprintf(stderr, "plorpos: music playing, game sound closed\n");
+	} else if (!quiet && !sound_open && sample_rate) {
+		if (plat_sound_init() == 0) {
+			fprintf(stderr, "plorpos: game sound open again\n");
+			failing = false;
+		} else if (!failing) {
+			/* Once, not every 500 ms while it keeps failing. */
+			fprintf(stderr, "plorpos: game sound will not open yet: %s\n", SDL_GetError());
+			failing = true;
+		}
+	}
+}
+#endif
 
 int plat_sound_occupancy(void)
 {
@@ -542,15 +611,27 @@ int plat_init(void)
 	}
 	in_probe();
 
+#ifdef PLORPOS
+	/* Muse may hold the codec at launch; the game starts quiet then, and a
+	 * device that will not open now is tried again every 500 ms. */
+	plorpos_init();
+	return 0;
+#else
 	if (plat_sound_init()) {
 		PA_ERROR("SDL sound failed to init: %s\n", SDL_GetError());
 		return -1;
 	}
 	return 0;
+#endif
 }
 
 int plat_reinit(void)
 {
+#ifdef PLORPOS
+	if (!sound_open) {
+		plat_sound_set_quiet(sound_quiet);
+	} else
+#endif
 	if (sample_rate && sample_rate != audio.in_sample_rate) {
 		plat_sound_finish();
 
