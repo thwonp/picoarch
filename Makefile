@@ -87,6 +87,7 @@ mednafen_lynx_REVISION = fcdefcfb3c11d6d2e71be076a5d3df2e88ab73ed
 mednafen_lynx_TYPES = lnx,lyx,bll,o
 
 mednafen_ngp_REPO = https://github.com/libretro/beetle-ngp-libretro
+mednafen_ngp_REVISION = a50d5ac288a81f2104ddf43195a4efdd15c72227
 mednafen_ngp_TYPES = ngp,ngc,ngpc,npc
 
 mednafen_pce_fast_REPO = https://github.com/libretro/beetle-pce-fast-libretro
