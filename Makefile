@@ -125,6 +125,7 @@ smsplus-gx_TYPES = sms,bin,rom,col,gg,sg
 snes9x2002_TYPES = smc,fig,sfc,gd3,gd7,dx2,bsx,swc,zip
 
 snes9x2005_REPO = https://github.com/libretro/snes9x2005
+snes9x2005_REVISION = a79dfe9047e7fec58808aefe48ad2bf499c7af11
 snes9x2005_TYPES = smc,fig,sfc,gd3,gd7,dx2,bsx,swc,zip
 
 snes9x2005_plus_REPO = https://github.com/libretro/snes9x2005

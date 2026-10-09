@@ -17,12 +17,6 @@ static const struct core_override_option snes9x2005_core_option_overrides[] = {
 		.info = "When 'Frameskip' is set to 'Threshold', sets how low the audio buffer can get before frames will be skipped.",
 	},
 	{
-		.key = "snes9x_2005_frameskip_interval",
-		.desc = "FS Interval",
-		.info = "The maximum number of frames that can be skipped before a new frame is rendered.",
-		.default_value = "3"
-	},
-	{
 		.key = "snes9x_2005_low_pass_range",
 		.info = "Specify the cut-off frequency of the audio filter. Higher values increase the perceived 'strength' of the filter."
 	},
@@ -35,14 +29,6 @@ static const struct core_override_option snes9x2005_core_option_overrides[] = {
 		.key = "snes9x_2005_reduce_sprite_flicker",
 		.desc = "Reduce Flicker",
 		.info = "Raises sprite limit to reduce flickering in games.",
-	},
-	{
-		.key = "snes9x_2005_dynarec",
-#ifdef FUNKEY_S
-		.default_value = "disabled",
-#else
-		.default_value = "enabled",
-#endif
 	},
 	{ NULL }
 };
