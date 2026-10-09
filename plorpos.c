@@ -95,6 +95,12 @@ bool plorpos_send(const char *cmd)
 	bool ok;
 
 	if (fd < 0) return false;
+	/* Anything sent from the MUSIC page while the music is not playing may
+	 * start it, and Muse waits only a second for the codec - while this menu
+	 * is up the tick that would let go of it does not run, and every track
+	 * was found busy and skipped (plorpos-ggv.24). So let go first; if the
+	 * music does not start, the tick opens the game's sound again. */
+	if (!playing) plat_sound_set_quiet(true);
 	snprintf(line, sizeof line, "%s\n", cmd);
 	ok = write(fd, line, strlen(line)) == (ssize_t)strlen(line);
 	close(fd);

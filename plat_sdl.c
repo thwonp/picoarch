@@ -415,6 +415,8 @@ static int plat_sound_init(void)
  * skipping frames (gpsp) ran at 300 fps quiet. So quiet, each frame waits for
  * its time here; a loop that fell behind starts over rather than run fast to
  * catch up. Not under fast-forward (limit_frames off). */
+static bool quiet_behind;
+
 void plat_sound_quiet_pace(void)
 {
 	static uint64_t next;
@@ -422,9 +424,11 @@ void plat_sound_quiet_pace(void)
 
 	if (sound_open || !limit_frames || !frame_time) {
 		next = 0;
+		quiet_behind = false;
 		return;
 	}
 	t = plat_get_ticks_us_u64();
+	quiet_behind = next && t > next + (uint64_t)frame_time;
 	if (next && t < next && next - t < 100000) {
 		usleep(next - t);
 		t = plat_get_ticks_us_u64();
@@ -458,6 +462,14 @@ void plat_sound_set_quiet(bool quiet)
 int plat_sound_occupancy(void)
 {
 	int buffered = 0;
+#ifdef PLORPOS
+	/* Quiet there is no buffer, and an empty one reads as an underrun: a
+	 * core's auto frameskip then drew one frame in several and SNES was
+	 * unplayable with music on (plorpos-ggv.23). Say what a buffer would:
+	 * full while the pacer keeps time, empty when the loop falls behind. */
+	if (!sound_open && sound_quiet)
+		return quiet_behind ? 0 : 100;
+#endif
 	if (audio.buf_len == 0)
 		return 0;
 
