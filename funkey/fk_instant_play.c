@@ -36,6 +36,7 @@
 #include "overrides.h"
 #include "plat.h"
 #include "util.h"
+#include "main.h"
 
 #ifndef SHELL_CMD_POWERDOWN
 #define SHELL_CMD_POWERDOWN                 "powerdown"
@@ -128,9 +129,17 @@ void FK_LoadNewGame(const char *fname)
     exit(0);
 }
 
+#ifdef PLORPOS
+static bool no_autosave;
+#endif
+
 void FK_Autosave(void)
 {
     const struct core_override *override = get_overrides();
+
+#ifdef PLORPOS
+    if (no_autosave) return;
+#endif
 
     if (state_allowed() && (!override || !(override->prevent_resume))) {
         int prev_state_slot = state_slot;
@@ -151,6 +160,17 @@ void FK_Resume(void)
         } else {
             SDL_Surface *screen = SDL_GetVideoSurface();
             int resume = FK_RunResumeMenu(screen);
+#ifdef PLORPOS
+            if (resume == RESUME_QUIT) {
+                /* Back to the shelf: the save stays for next time, and
+                 * nothing is saved over it on the way out. */
+                plat_video_menu_leave();
+                instant_play = false;
+                no_autosave = true;
+                should_quit = 1;
+                return;
+            }
+#endif
             if (resume == RESUME_YES) {
                 resume_slot = AUTOSAVE_SLOT;
             }

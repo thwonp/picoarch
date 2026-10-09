@@ -170,4 +170,9 @@ extern void FK_NextAspectRatio(void);
 }
 #endif
 
+#ifdef PLORPOS
+/* FK_RunResumeMenu: B, back to the shelf with the save kept. */
+#define RESUME_QUIT (-1)
+#endif
+
 #endif /* _FK_menu_h */

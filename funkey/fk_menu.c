@@ -1682,6 +1682,14 @@ int FK_RunResumeMenu(SDL_Surface *hw_screen)
                             /// ------ Refresh screen ------
                             screen_refresh = 1;
                         }
+#ifdef PLORPOS
+                        /* B leaves the game for the shelf, keeping the save
+                         * for next time (ggv.12 T4). */
+                        else{
+                            option_idx = RESUME_QUIT;
+                            stop_menu_loop = 1;
+                        }
+#endif
                         /*else{
                             stop_menu_loop = 1;
                         }*/
@@ -1719,7 +1727,13 @@ int FK_RunResumeMenu(SDL_Surface *hw_screen)
                     case SDLK_a:
                     case SDLK_RETURN:
                         MENU_DEBUG_PRINTF("Pressed A\n");
+#ifdef PLORPOS
+                        /* Resuming loses nothing: no "Are you sure ?" for
+                         * it, only for a new game (ggv.12 T4). */
+                        if(menu_confirmation || option_idx == RESUME_YES){
+#else
                         if(menu_confirmation){
+#endif
                             MENU_DEBUG_PRINTF("Confirmed\n");
 
                             /// ----- exit menu  ----
