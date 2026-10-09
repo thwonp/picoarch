@@ -57,27 +57,12 @@ static const struct core_override_option gpsp_core_option_overrides[] = {
 	},
 	{
 		.key = "gpsp_color_correction",
-		.info = "Adjusts output colors to match real GBA hardware.",
-		.options = {
-			{"disabled", NULL},
-			{"enabled", NULL},
-			{ NULL, NULL }
-		}
+		.info = "Adjusts output colors to match real GBA hardware."
 	},
 	{
 		.key = "gpsp_frame_mixing",
 		.desc = "Frame Blending",
-		.info = "Simulates LCD ghosting effects.",
-		.options = {
-			{"disabled", NULL},
-			{"enabled", NULL},
-			{ NULL, NULL }
-		}
-	},
-	{
-		.key = "gpsp_save_method",
-		.default_value = "libretro",
-		.blocked = true
+		.info = "Simulates LCD ghosting effects."
 	},
 	{ NULL }
 };
