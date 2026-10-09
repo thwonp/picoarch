@@ -1065,6 +1065,16 @@ int FK_RunMenu(SDL_Surface *screen)
 							/// ------ Refresh screen ------
 							screen_refresh = 1;
 						}
+#ifdef PLORPOS
+						/* B closes the menu too, as on the shelf (ggv.12 T4). */
+						else
+#ifdef HAS_MENU_USB
+						if(!usb_sharing)
+#endif
+						{
+							stop_menu_loop = 1;
+						}
+#endif
 						/*else{
 							stop_menu_loop = 1;
 						}*/
