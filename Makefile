@@ -25,7 +25,7 @@ LDFLAGS    = -lc -ldl -lgcc -lm -lSDL -lasound -lpng -lz -Wl,--gc-sections -flto
 # Unpolished or slow cores that build
 # EXTRA_CORES += mame2003_plus scummvm
 
-CORES = bluemsx chimerasnes ecwolf fceumm fmsx gambatte gme gpsp mame2000 mednafen_lynx mednafen_ngp mednafen_pce_fast mednafen_wswan pcsx_rearmed picodrive pokemini prboom quicknes smsplus-gx snes9x2002 snes9x2005 stella2014 tyrquake vitaquake2 $(EXTRA_CORES)
+CORES = bluemsx chimerasnes ecwolf fceumm fmsx gambatte gme gpsp mame2000 mednafen_lynx mednafen_ngp mednafen_pce_fast mednafen_supergrafx mednafen_wswan pcsx_rearmed picodrive pokemini prboom quicknes smsplus-gx snes9x2002 snes9x2005 stella2014 tyrquake vitaquake2 $(EXTRA_CORES)
 
 ifneq ($(platform), trimui)
 CORES := $(CORES) dosbox-pure fake-08 fbalpha2012 snes9x2005_plus snes9x2010
@@ -92,6 +92,10 @@ mednafen_ngp_TYPES = ngp,ngc,ngpc,npc
 
 mednafen_pce_fast_REPO = https://github.com/libretro/beetle-pce-fast-libretro
 mednafen_pce_fast_TYPES = pce,cue,ccd,chd,toc,m3u
+
+mednafen_supergrafx_REPO = https://github.com/libretro/beetle-supergrafx-libretro
+mednafen_supergrafx_REVISION = 9c11dcd213a79d57d2c86313971631af801f2cdc
+mednafen_supergrafx_TYPES = pce,sgx,cue,ccd,chd,toc,m3u
 
 mednafen_wswan_REPO = https://github.com/libretro/beetle-wswan-libretro
 mednafen_wswan_REVISION = 4b01295838ea89e3f1355bbe4cb5cf98aa6108cd
