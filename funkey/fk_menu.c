@@ -1066,12 +1066,18 @@ int FK_RunMenu(SDL_Surface *screen)
 							screen_refresh = 1;
 						}
 #ifdef PLORPOS
-						/* B closes the menu too, as on the shelf (ggv.12 T4). */
+						/* B closes the menu too, as on the shelf (ggv.12 T4),
+						 * once it is let go: closed while held, the game got
+						 * B's held-down repeats (ggv.27). */
 						else
 #ifdef HAS_MENU_USB
 						if(!usb_sharing)
 #endif
 						{
+							SDL_Event sdlevent;
+							do {
+								SDL_WaitEvent(&sdlevent);
+							} while (sdlevent.type != SDL_KEYUP || sdlevent.key.keysym.sym != event.key.keysym.sym);
 							stop_menu_loop = 1;
 						}
 #endif
