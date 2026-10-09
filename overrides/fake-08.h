@@ -21,6 +21,7 @@ static const struct core_override_option fake08_core_option_overrides[] = {
 		.key = "fake08_crop_v_bottom",
 		.desc = "Crop Vert. Bottom"
 	},
+	{ NULL }
 };
 
 

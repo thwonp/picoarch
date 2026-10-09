@@ -5,6 +5,7 @@ static const struct core_override_option fbneo_core_option_overrides[] = {
 		.key = "fbneo-vertical-mode",
 		.blocked = true
 	},
+	{ NULL }
 };
 
 #define fbneo_overrides {                           \
