@@ -18,6 +18,7 @@ static const struct core_override_option mednafen_lynx_core_option_overrides[] =
 		.key = "lynx_force_60hz",
 		.default_value = "enabled"
 	},
+	{ NULL }
 };
 
 #define mednafen_lynx_overrides {                            \

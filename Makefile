@@ -83,6 +83,7 @@ mame2003_plus_REPO = https://github.com/libretro/mame2003-plus-libretro
 mame2003_plus_TYPES = zip
 
 mednafen_lynx_REPO = https://github.com/libretro/beetle-lynx-libretro
+mednafen_lynx_REVISION = fcdefcfb3c11d6d2e71be076a5d3df2e88ab73ed
 mednafen_lynx_TYPES = lnx,lyx,bll,o
 
 mednafen_ngp_REPO = https://github.com/libretro/beetle-ngp-libretro
