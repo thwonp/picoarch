@@ -69,6 +69,7 @@ fmsx_REPO = https://github.com/libretro/fmsx-libretro
 fmsx_TYPES = rom,mx1,mx2,dsk,cas
 
 gambatte_REPO = https://github.com/libretro/gambatte-libretro
+gambatte_REVISION = d9d6cd06382d1ced30de34d56d3609452323dab1
 gambatte_TYPES = gb,gbc,dmg,zip
 
 gme_REPO = https://github.com/libretro/libretro-gme
