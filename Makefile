@@ -57,6 +57,7 @@ fake-08_MAKEFILE = Makefile
 fake-08_CORE = fake08_libretro.so
 fake-08_TYPES = p8,png
 
+fbalpha2012_REVISION = 0ce31536bef3162fe7e69ff5f555334ec4913cef
 fbalpha2012_BUILD_PATH = fbalpha2012/svn-current/trunk
 fbalpha2012_MAKEFILE = makefile.libretro
 fbalpha2012_TYPES = zip

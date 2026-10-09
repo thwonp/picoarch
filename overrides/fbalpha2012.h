@@ -17,7 +17,7 @@ static const struct core_override_option fbalpha2012_core_option_overrides[] = {
 		.key = "fbneo-interval",
 		.info = "The maximum number of frames that can be skipped before a new frame is rendered.",
 		.default_value = "2",
-		.retro_var_value = "FS Interval; 1|2|3|4|5|6|7|8|9",
+		.retro_var_value = "FS Interval; 0|1|2|3|4|5|6|7|8|9",
 	},
 	{
 		.key = "fbneo-allow-depth-32",
@@ -31,16 +31,11 @@ static const struct core_override_option fbalpha2012_core_option_overrides[] = {
 	},
 	{
 		.key = "fbneo-sample-interpolation",
-		.retro_var_value = "Sample Interp.; 4-point|2-point|disabled"
+		.retro_var_value = "Sample Interp.; 4-point 3rd order|2-point 1st order|disabled"
 	},
 	{
 		.key = "fbneo-fm-interpolation",
-		.retro_var_value = "FM Interpolation; 4-point|disabled"
-	},
-	{
-		.key = "fbneo-cyclone",
-		.info = "Requires restart. Changes savestate format. Use at your own risk.",
-		.retro_var_value = "Cyclone; disabled|enabled"
+		.retro_var_value = "FM Interpolation; 4-point 3rd order|disabled"
 	},
 	{
 		.key = "fbneo-neogeo-mode",
