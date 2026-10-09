@@ -5,6 +5,8 @@
 #include "bench.h"
 #include "main.h"
 #include "options.h"
+#include "overrides.h"
+#include <unistd.h>
 #include "plat.h"
 
 /* Seconds left out of the summary: loading, and the sound handover when the
@@ -170,4 +172,102 @@ void bench_frame_end(void)
 		hist[d / 500 < HIST_N ? d / 500 : HIST_N - 1]++;
 	if (t - sec_start >= 1000000)
 		second_done(t);
+}
+
+/* ------------------------------------------------------------ option check */
+
+static FILE *check_open(const struct core_override **ov)
+{
+	FILE *f;
+
+	if (access(BENCH_CONF, R_OK) != 0 || !(*ov = get_overrides()) || !(*ov)->options)
+		return NULL;
+	if ((f = fopen(BENCH_LOG, "a")))
+		fprintf(f, "optcheck core=%s\n", core_name);
+	return f;
+}
+
+static void check_done(FILE *f, int n, int bad)
+{
+	fprintf(f, "optcheck %d overrides, %d problems\n", n, bad);
+	fclose(f);
+}
+
+void bench_check_options(const struct retro_core_option_definition *defs)
+{
+	const struct core_override *ov;
+	const struct core_override_option *o;
+	FILE *f = check_open(&ov);
+	int n = 0, bad = 0, i, j, nv;
+
+	if (!f) return;
+	for (o = ov->options; o->key; o++, n++) {
+		const struct retro_core_option_definition *d = NULL;
+		bool dflt = !o->default_value;
+
+		for (i = 0; defs[i].key; i++)
+			if (!strcmp(defs[i].key, o->key)) d = &defs[i];
+		if (!d) {
+			fprintf(f, "optcheck %s: no such option in the core\n", o->key), bad++;
+			continue;
+		}
+		for (nv = 0; d->values[nv].value; nv++)
+			if (o->default_value && !strcmp(o->default_value, d->values[nv].value)) dflt = true;
+		for (j = 0; j < RETRO_NUM_CORE_OPTION_VALUES_MAX; j++) {
+			if (!o->options[j].value) continue;
+			if (j >= nv)
+				fprintf(f, "optcheck %s: value %d \"%s\" past the core's %d\n",
+				        o->key, j, o->options[j].value, nv), bad++;
+			else if (strcmp(o->options[j].value, d->values[j].value))
+				fprintf(f, "optcheck %s: value %d is \"%s\" in the core, \"%s\" here\n",
+				        o->key, j, d->values[j].value, o->options[j].value), bad++;
+		}
+		if (!dflt)
+			fprintf(f, "optcheck %s: default \"%s\" is not a value\n", o->key, o->default_value), bad++;
+	}
+	check_done(f, n, bad);
+}
+
+void bench_check_variables(const struct retro_variable *vars)
+{
+	const struct core_override *ov;
+	const struct core_override_option *o;
+	FILE *f = check_open(&ov);
+	int n = 0, bad = 0, i;
+
+	if (!f) return;
+	for (o = ov->options; o->key; o++, n++) {
+		const struct retro_variable *v = NULL;
+		const char *core_vals, *our_vals, *dv;
+		size_t k;
+
+		for (i = 0; vars[i].key; i++)
+			if (!strcmp(vars[i].key, o->key)) v = &vars[i];
+		if (!v) {
+			fprintf(f, "optcheck %s: no such option in the core\n", o->key), bad++;
+			continue;
+		}
+		/* "Description; a|b|c": the values are what follows "; ". */
+		core_vals = strstr(v->value, "; ");
+		core_vals = core_vals ? core_vals + 2 : v->value;
+		if (o->retro_var_value) {
+			our_vals = strstr(o->retro_var_value, "; ");
+			our_vals = our_vals ? our_vals + 2 : o->retro_var_value;
+			if (strcmp(core_vals, our_vals))
+				fprintf(f, "optcheck %s: values are \"%s\" in the core, \"%s\" here\n",
+				        o->key, core_vals, our_vals), bad++;
+		} else {
+			our_vals = core_vals;
+		}
+		if ((dv = o->default_value)) {
+			const char *p = our_vals;
+
+			k = strlen(dv);
+			while (p && !(!strncmp(p, dv, k) && (p[k] == '|' || !p[k])))
+				if ((p = strchr(p, '|'))) p++;
+			if (!p)
+				fprintf(f, "optcheck %s: default \"%s\" is not a value\n", o->key, dv), bad++;
+		}
+	}
+	check_done(f, n, bad);
 }

@@ -6,6 +6,9 @@
 #include "overrides.h"
 #include "util.h"
 #include "scale.h"
+#ifdef PLORPOS
+#include "bench.h"
+#endif
 
 int show_fps;
 int show_cpu;
@@ -64,6 +67,9 @@ static const struct core_override_option *get_option_override(const char *key) {
 void options_init(const struct retro_core_option_definition *defs) {
 	size_t i;
 
+#ifdef PLORPOS
+	bench_check_options(defs);
+#endif
 	for (i = 0; defs[i].key; i++)
  		;
 
@@ -182,6 +188,9 @@ void options_init(const struct retro_core_option_definition *defs) {
 void options_init_variables(const struct retro_variable *vars) {
 	size_t i;
 
+#ifdef PLORPOS
+	bench_check_variables(vars);
+#endif
 	for (i = 0; vars[i].key; i++)
 		;
 

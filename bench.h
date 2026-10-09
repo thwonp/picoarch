@@ -16,6 +16,13 @@
 /* Read BENCH_CONF; true when benching. Before the first frame. */
 bool bench_init(const char *core, const char *rom);
 bool bench_on(void);
+/* Each override in overrides/<core>.h against the options the core gives,
+ * as "optcheck" lines in BENCH_LOG: an override replaces the core's values by
+ * position, so a value upstream added or moved silently breaks the option. */
+struct retro_core_option_definition;
+struct retro_variable;
+void bench_check_options(const struct retro_core_option_definition *defs);
+void bench_check_variables(const struct retro_variable *vars);
 /* Around core_run_frame, every frame. */
 void bench_frame_start(void);
 void bench_frame_end(void);
