@@ -138,7 +138,7 @@ ifeq ($(platform), trimui)
 	CFLAGS += -mcpu=arm926ej-s -mtune=arm926ej-s -fno-PIC -DCONTENT_DIR='"/mnt/SDCARD/Roms"'
 	LDFLAGS += -fno-PIC
 else ifeq ($(platform), funkey-s)
-	SOURCES += plat_funkey.c funkey/fk_menu.c funkey/fk_instant_play.c plorpos.c
+	SOURCES += plat_funkey.c funkey/fk_menu.c funkey/fk_instant_play.c plorpos.c bench.c
 	CFLAGS += -DCONTENT_DIR='"/mnt"' -DFUNKEY_S
 	LDFLAGS += -fPIC
 	LDFLAGS += -lSDL_image -lSDL_ttf # For fk_menu

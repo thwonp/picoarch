@@ -351,6 +351,10 @@ static void plat_sound_callback(void *unused, uint8_t *stream, int len)
 		if (audio.buf_r >= audio.buf_len) audio.buf_r = 0;
 	}
 
+#ifdef PLORPOS
+	if (len > 0)
+		plat_bench_underruns++;
+#endif
 	while(len > 0) {
 		*p++ = 0;
 		--len;
@@ -416,6 +420,9 @@ static int plat_sound_init(void)
  * its time here; a loop that fell behind starts over rather than run fast to
  * catch up. Not under fast-forward (limit_frames off). */
 static bool quiet_behind;
+unsigned plat_bench_behind, plat_bench_underruns;
+
+int plat_bench_frame_us(void) { return frame_time; }
 
 void plat_sound_quiet_pace(void)
 {
@@ -429,6 +436,8 @@ void plat_sound_quiet_pace(void)
 	}
 	t = plat_get_ticks_us_u64();
 	quiet_behind = next && t > next + (uint64_t)frame_time;
+	if (quiet_behind)
+		plat_bench_behind++;
 	if (next && t < next && next - t < 100000) {
 		usleep(next - t);
 		t = plat_get_ticks_us_u64();

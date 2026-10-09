@@ -37,6 +37,7 @@
 #include "plat.h"
 #include "util.h"
 #include "main.h"
+#include "bench.h"
 
 #ifndef SHELL_CMD_POWERDOWN
 #define SHELL_CMD_POWERDOWN                 "powerdown"
@@ -153,6 +154,14 @@ void FK_Resume(void)
 {
     char autosave_path[MAX_PATH];
 
+#ifdef PLORPOS
+    /* A bench run starts the game from boot every time and saves nothing. */
+    if (bench_on()) {
+        instant_play = false;
+        no_autosave = true;
+        return;
+    }
+#endif
     state_file_name(autosave_path, MAX_PATH, AUTOSAVE_SLOT);
     if (access(autosave_path, F_OK) == 0) {
         if (instant_play) {

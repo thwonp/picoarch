@@ -11,6 +11,7 @@
 #include "main.h"
 #ifdef PLORPOS
 #include "plorpos.h"
+#include "bench.h"
 #endif
 #include "menu.h"
 #include "overrides.h"
@@ -758,6 +759,10 @@ int main(int argc, char **argv) {
 		toggle_fast_forward(1);
 	}
 
+#ifdef PLORPOS
+	bench_init(core_path, content_path);
+#endif
+
 #ifdef FUNKEY_S
 	FK_InitMenu();
 	FK_Resume();
@@ -770,7 +775,13 @@ int main(int argc, char **argv) {
 #endif
 		count_fps();
 		adjust_audio();
+#ifdef PLORPOS
+		bench_frame_start();
 		core_run_frame();
+		bench_frame_end();
+#else
+		core_run_frame();
+#endif
 		perform_emu_action();
 #ifdef FUNKEY_S
 		if (should_suspend) {
