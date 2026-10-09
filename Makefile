@@ -223,7 +223,7 @@ $1_MAKE = make $(and $($1_MAKEFILE),-f $($1_MAKEFILE)) platform=$(core_platform)
 
 $(1):
 	git clone $(if $($1_REVISION),,--depth 1) --recursive $$($(1)_REPO) $(1)
-	$(if $1_REVISION,cd $(1) && git checkout $($1_REVISION),)
+	$(if $1_REVISION,cd $(1) && git checkout $($1_REVISION) && git submodule update --init --recursive,)
 	(test ! -d patches/$(1)) || (cd $(1) && $(foreach patch, $(sort $(wildcard patches/$(1)/*.patch)), patch --merge --no-backup-if-mismatch -p1 < ../$(patch) &&) true)
 
 $(1)/$(1)_libretro.so: $(1)
