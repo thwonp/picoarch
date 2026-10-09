@@ -94,6 +94,7 @@ mednafen_pce_fast_REPO = https://github.com/libretro/beetle-pce-fast-libretro
 mednafen_pce_fast_TYPES = pce,cue,ccd,chd,toc,m3u
 
 mednafen_wswan_REPO = https://github.com/libretro/beetle-wswan-libretro
+mednafen_wswan_REVISION = 4b01295838ea89e3f1355bbe4cb5cf98aa6108cd
 mednafen_wswan_TYPES = ws,wsc,pc2
 
 pcsx_rearmed_MAKEFILE = Makefile.libretro
