@@ -446,6 +446,10 @@ static void add_menu_zone(ENUM_MENU_TYPE menu_type)
 static uint32_t music_poll_ms;
 #endif
 
+#ifdef PLORPOS
+int fk_menu_no_core;
+#endif
+
 static void init_menu_zones(void)
 {
 #ifdef HAS_MENU_MUSIC
@@ -457,6 +461,9 @@ static void init_menu_zones(void)
 #endif
 #ifdef HAS_MENU_BRIGHTNESS
 	add_menu_zone(MENU_TYPE_BRIGHTNESS);
+#endif
+#ifdef PLORPOS
+	if (!fk_menu_no_core) {
 #endif
 #ifdef HAS_MENU_SAVE
 	if (state_allowed()) {
@@ -471,10 +478,16 @@ static void init_menu_zones(void)
 #ifdef HAS_MENU_ASPECT_RATIO
 	add_menu_zone(MENU_TYPE_ASPECT_RATIO);
 #endif
+#ifdef PLORPOS
+	}
+#endif
 #ifdef HAS_MENU_RO_RW
 	add_menu_zone(MENU_TYPE_RO_RW);
 #endif
 #ifdef HAS_MENU_ADVANCED
+#ifdef PLORPOS
+	if (!fk_menu_no_core)
+#endif
 	add_menu_zone(MENU_TYPE_ADVANCED);
 #endif
 #ifdef HAS_MENU_EXIT

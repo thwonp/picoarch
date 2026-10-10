@@ -667,6 +667,65 @@ int state_resume(void) {
 	return ret;
 }
 
+#if defined(PLORPOS) && defined(FUNKEY_S)
+#include <fcntl.h>
+#include <linux/fb.h>
+#include <sys/ioctl.h>
+
+/* picoarch --menu: FunKey's menu alone, over what is on the screen, for a
+ * game picoarch does not run - the owner's native PICO-8 on the RG Nano
+ * (TortOS plorpos-ggv.42.5, its tools/nano-pico8.c runs this on the power
+ * key's tap). Music, volume, brightness, exit and powerdown as in a game;
+ * no Save, Load, Aspect or Advanced, there being no core. No sound is
+ * opened: with no core, plorpos_init leaves it closed. Exit status 0 to go
+ * back to the game, 1 to leave it. */
+static int menu_only(void)
+{
+	static uint16_t shown[SCREEN_WIDTH * SCREEN_HEIGHT];
+	struct fb_var_screeninfo var;
+	int fd = open("/dev/fb0", O_RDONLY), have = 0, r, y;
+
+	/* The game's frame, read before SDL sets the video mode over it. */
+	if (fd >= 0 && ioctl(fd, FBIOGET_VSCREENINFO, &var) == 0 && var.bits_per_pixel == 16 &&
+	    var.xres_virtual == SCREEN_WIDTH) {
+		off_t at = (off_t)var.yoffset * SCREEN_PITCH;
+
+		have = pread(fd, shown, sizeof shown, at) == (ssize_t)sizeof shown;
+	}
+	if (fd >= 0) close(fd);
+
+	/* A menu that cannot open says go back to the game, not leave it. */
+	if (plat_init()) {
+		PA_ERROR("menu: %s\n", SDL_GetError());
+		return 0;
+	}
+	/* menu_init for the menu's background buffer (plat_video_menu_enter). */
+	if (menu_init() || IMG_Init(IMG_INIT_PNG) == 0 || TTF_Init() == -1) {
+		PA_ERROR("Error initializing the menu, SDL_image or SDL_ttf\n");
+		plat_finish();
+		return 0;
+	}
+	if (have) {
+		SDL_Surface *screen = SDL_GetVideoSurface();
+
+		SDL_LockSurface(screen);
+		for (y = 0; y < SCREEN_HEIGHT; y++)
+			memcpy((uint8_t *)screen->pixels + y * screen->pitch,
+			       shown + y * SCREEN_WIDTH, SCREEN_PITCH);
+		SDL_UnlockSurface(screen);
+	}
+	fk_menu_no_core = 1;
+	FK_InitMenu();
+	r = FK_RunMenu(SDL_GetVideoSurface()) == MENU_RETURN_EXIT;
+	FK_EndMenu();
+	TTF_Quit();
+	IMG_Quit();
+	menu_finish();
+	plat_finish();
+	return r;
+}
+#endif
+
 int main(int argc, char **argv) {
 	char content_path[MAX_PATH];
 	const struct core_override *override;
@@ -677,6 +736,10 @@ int main(int argc, char **argv) {
 			printf("Usage: picoarch [libretro_core [content]]\n");
 			return 0;
 		}
+#if defined(PLORPOS) && defined(FUNKEY_S)
+		if (!strcmp(argv[1], "--menu"))
+			return menu_only();
+#endif
 	}
 
 	if (plat_init()) {

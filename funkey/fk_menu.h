@@ -157,6 +157,11 @@ extern void FK_InitMenu(Configuration &c);
 extern void FK_InitMenu(void);
 #endif
 extern void FK_EndMenu(void);
+#ifdef PLORPOS
+/* Set before FK_InitMenu: no core behind the menu (picoarch --menu), so no
+ * Save, Load, Aspect or Advanced pages. */
+extern int fk_menu_no_core;
+#endif
 extern int FK_RunMenu(SDL_Surface *screen);
 extern int FK_RunResumeMenu(SDL_Surface *screen);
 extern void FK_StopMenu(void);
