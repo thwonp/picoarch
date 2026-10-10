@@ -125,6 +125,11 @@ picodrive_MAKEFILE = Makefile.libretro
 # its generic ARM platform turns the ARM asm cores and DRCs off unless told.
 picodrive_FLAGS = GIT_REVISION=-$(shell echo $(picodrive_REVISION) | cut -c1-8) NO_ARM_ASM=0
 picodrive_TYPES = bin,gen,smd,md,32x,cue,iso,chd,sms,gg,m3u,68k,sgd
+# The trimui toolchain's kernel headers predate the HWCAP2 bits libchdr's LZMA
+# asks for, and its makefile takes no CFLAGS from outside: no CHD Sega CD here.
+ifeq ($(platform), trimui)
+picodrive_FLAGS += use_libchdr=0
+endif
 
 pokemini_REVISION = 132111b76343559860532a1ccc094f93f1ed5650
 pokemini_TYPES = min
