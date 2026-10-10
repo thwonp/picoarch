@@ -1,9 +1,9 @@
 #!/bin/sh
 # Packages the RG Nano cores built by build-nano-cores.sh for a release of
-# this fork (plorpos-ggv.39): dist/picoarch-nano-cores-TAG.zip holding the
+# this fork (plorpos-ggv.39): dist/picoarch-TAG.zip holding the
 # cores under the file names plorpOS nano loads, NANO-CORES.md, and
 # SOURCES.txt (each core's upstream repo, commit, patches and licence).
-#   ./package-nano-cores.sh TAG
+#   ./package-nano-cores.sh TAG      (e.g. nano-cores-2026.10)
 set -eu
 cd "$(dirname "$0")"
 TAG=$1
@@ -28,12 +28,12 @@ if [ -n "$(git status --porcelain --untracked-files=no -- . ':!libpicofe')" ]; t
 	exit 1
 fi
 FORK=$(git rev-parse HEAD)
-OUT=dist/picoarch-nano-cores-$TAG
+OUT=dist/picoarch-$TAG
 rm -rf "$OUT" "$OUT.zip"
 mkdir -p "$OUT/cores"
 cp NANO-CORES.md "$OUT/"
 {
-	echo "picoarch-nano-cores $TAG"
+	echo "picoarch $TAG"
 	echo
 	echo "Built for the RG Nano (FunKey-OS 2.3.0, FunKey SDK 2.3.0) by build-nano-cores.sh"
 	echo "in https://github.com/thwonp/picoarch at $FORK."
@@ -51,5 +51,5 @@ cp NANO-CORES.md "$OUT/"
 		echo "  md5:     $(md5sum "${c}_libretro.so" | cut -c1-32)"
 	done
 } > "$OUT/SOURCES.txt"
-( cd dist && zip -qrX "picoarch-nano-cores-$TAG.zip" "picoarch-nano-cores-$TAG" )
+( cd dist && zip -qrX "picoarch-$TAG.zip" "picoarch-$TAG" )
 echo "$OUT.zip ($(du -k "$OUT.zip" | cut -f1) kB, md5 $(md5sum "$OUT.zip" | cut -c1-8))"
