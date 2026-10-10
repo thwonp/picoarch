@@ -604,6 +604,15 @@ static bool pa_environment(unsigned cmd, void *data) {
 
 		break;
 	}
+#ifdef PLORPOS
+	case RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE: { /* 47 */
+		/* Video always; audio only while someone hears it - under music the
+		 * sound device is closed, and a core that listens skips its mixing. */
+		if (data)
+			*(int *)data = 1 | (plat_sound_audible() ? 2 : 0);
+		break;
+	}
+#endif
 	case RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK: { /* 62 */
 		const struct retro_audio_buffer_status_callback *cb =
 			(const struct retro_audio_buffer_status_callback *)data;

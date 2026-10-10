@@ -34,6 +34,9 @@ void plat_sound_resize_buffer(void);
  * plorpos.h); the frame timer paces the game meanwhile. */
 void plat_sound_set_quiet(bool quiet);
 void plat_sound_quiet_pace(void);
+/* False while quiet: the core may skip making sound nobody hears
+ * (RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE). */
+bool plat_sound_audible(void);
 /* For bench.c: frames the quiet pacer fell behind, sound callbacks the
  * buffer ran dry in, and the frame budget. */
 extern unsigned plat_bench_behind, plat_bench_underruns;

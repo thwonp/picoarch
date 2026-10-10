@@ -424,6 +424,11 @@ unsigned plat_bench_behind, plat_bench_underruns;
 
 int plat_bench_frame_us(void) { return frame_time; }
 
+bool plat_sound_audible(void)
+{
+	return sound_open || !sound_quiet;
+}
+
 void plat_sound_quiet_pace(void)
 {
 	static uint64_t next;
