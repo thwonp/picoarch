@@ -221,7 +221,13 @@ void set_defaults(void)
 	use_srm = 0;
 	audio_buffer_size = 5;
 	scale_size = SCALE_SIZE_SCALED;
+#ifdef FUNKEY_S
 	scale_filter = SCALE_FILTER_SMOOTH;
+#else
+	/* The trimui's ARM9 has no time for the generic blend: sharp has scalers
+	 * of its own for GB, GBA and 256-wide pictures on a 320x240 screen. */
+	scale_filter = SCALE_FILTER_SHARP;
+#endif
 
 	scale_update_scaler();
 	need_full_clear = 1;
