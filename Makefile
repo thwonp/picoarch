@@ -112,6 +112,12 @@ mednafen_wswan_TYPES = ws,wsc,pc2
 pcsx_rearmed_REVISION = c8816799b50388e61cfe237fe2cdbb7d8175f20a
 pcsx_rearmed_MAKEFILE = Makefile.libretro
 pcsx_rearmed_TYPES = bin,cue,img,mdf,pbp,toc,cbn,m3u,chd
+# It has no trimui platform; miyoo's is the same ARM926EJ-S (unai GPU, ari64
+# dynarec). Here, not with the trimui names below: CORE_template reads FLAGS
+# when it is expanded.
+ifeq ($(platform), trimui)
+pcsx_rearmed_FLAGS = platform=miyoo
+endif
 
 picodrive_REVISION = 1890c2932234c9d30f4cd3851d02228baae8f09e
 picodrive_MAKEFILE = Makefile.libretro
@@ -281,10 +287,6 @@ distclean: clean
 	rm -rf $(CORES) *.zip
 
 ifeq ($(platform), trimui)
-
-# pcsx_rearmed has no trimui platform; miyoo's is the same ARM926EJ-S
-# (unai GPU, ari64 dynarec).
-pcsx_rearmed_FLAGS += platform=miyoo
 
 bluemsx_NAME = blueMSX
 bluemsx_ROM_DIR = MSX

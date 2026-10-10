@@ -11,6 +11,9 @@ SDK=${SDK:-$(realpath ../TortOS/sdk-trimui/sdk)}
 X=/sdk/usr/bin/arm-buildroot-linux-gnueabi-
 [ $# -gt 0 ] || { echo "usage: $0 <core>..." >&2; exit 1; }
 
+# The toolchain's kernel headers (3.10) predate ARM's HWCAP2 bits, which the
+# LZMA in picodrive's libchdr asks getauxval about: the kernel's own values.
+HWCAP2='-DHWCAP2_AES=1 -DHWCAP2_PMULL=2 -DHWCAP2_SHA1=4 -DHWCAP2_SHA2=8 -DHWCAP2_CRC32=16'
 sos=
 for c; do
 	make "$c" platform=trimui
@@ -20,7 +23,7 @@ for c; do
 	sos="$sos ${c}_libretro.so"
 done
 docker run --rm -e LD_LIBRARY_PATH=/sdk/hostlib -v "$PWD":/w -v "$SDK":/sdk:ro -w /w tortos-toolchain sh -c "
-	export CFLAGS='-fdata-sections -ffunction-sections' LDFLAGS='-Wl,--gc-sections' &&
+	export CFLAGS='-fdata-sections -ffunction-sections $HWCAP2' LDFLAGS='-Wl,--gc-sections' &&
 	make $sos platform=trimui CROSS_COMPILE=$X CXX=${X}g++ &&
 	${X}strip $sos"
 ls -l $sos
