@@ -106,7 +106,11 @@ mednafen_wswan_TYPES = ws,wsc,pc2
 pcsx_rearmed_MAKEFILE = Makefile.libretro
 pcsx_rearmed_TYPES = bin,cue,img,mdf,pbp,toc,cbn,m3u,chd
 
+picodrive_REVISION = 1890c2932234c9d30f4cd3851d02228baae8f09e
 picodrive_MAKEFILE = Makefile.libretro
+# The tree's own fallback when git is missing (the build container) can glob;
+# its generic ARM platform turns the ARM asm cores and DRCs off unless told.
+picodrive_FLAGS = GIT_REVISION=-$(shell echo $(picodrive_REVISION) | cut -c1-8) NO_ARM_ASM=0
 picodrive_TYPES = bin,gen,smd,md,32x,cue,iso,chd,sms,gg,m3u,68k,sgd
 
 pokemini_REVISION = 132111b76343559860532a1ccc094f93f1ed5650

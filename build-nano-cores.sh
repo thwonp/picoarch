@@ -15,6 +15,11 @@ X=/sdk/bin/arm-funkey-linux-musleabihf-
 sos=
 for c; do
 	make "$c" platform=funkey-s
+	# picodrive's 68k core, Cyclone, is ARM asm written by a generator that
+	# must run here: the container has no native compiler.
+	[ "$c" = picodrive ] && [ ! -f picodrive/cpu/cyclone/Cyclone.s ] &&
+		CC=gcc CXX=g++ CFLAGS=-O2 CXXFLAGS=-O2 LDFLAGS= \
+			make -C picodrive/cpu/cyclone CONFIG_FILE=../cyclone_config.h
 	sos="$sos ${c}_libretro.so"
 done
 # CXX too: the Makefile passes CXX=$(CXX) to every core and never sets it.
