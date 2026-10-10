@@ -65,6 +65,9 @@ fbalpha2012_TYPES = zip
 
 fceumm_REPO = https://github.com/libretro/libretro-fceumm
 fceumm_MAKEFILE = Makefile.libretro
+fceumm_REVISION = 7a542dab1e87679921962a9f056186eca425c0c2
+# HD texture packs are no use on a 240x240 screen and their PPU hooks cost ~3% (plorpos-ggv.39.13)
+fceumm_FLAGS = HAVE_HDPACK=0
 fceumm_TYPES = fds,nes,unf,unif
 
 fmsx_REPO = https://github.com/libretro/fmsx-libretro
