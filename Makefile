@@ -157,8 +157,8 @@ vitaquake2_REPO = https://github.com/DrUm78/vitaquake2
 vitaquake2_TYPES = pak
 
 ifeq ($(platform), trimui)
-	SOURCES += plat_trimui.c
-	CFLAGS += -mcpu=arm926ej-s -mtune=arm926ej-s -fno-PIC -DCONTENT_DIR='"/mnt/SDCARD/Roms"'
+	SOURCES += plat_trimui.c plorpos.c bench.c
+	CFLAGS += -mcpu=arm926ej-s -mtune=arm926ej-s -fno-PIC -DCONTENT_DIR='"/mnt/SDCARD/Roms"' -DPLORPOS
 	LDFLAGS += -fno-PIC
 else ifeq ($(platform), funkey-s)
 	SOURCES += plat_funkey.c funkey/fk_menu.c funkey/fk_instant_play.c plorpos.c bench.c
