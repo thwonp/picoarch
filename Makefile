@@ -282,6 +282,10 @@ distclean: clean
 
 ifeq ($(platform), trimui)
 
+# pcsx_rearmed has no trimui platform; miyoo's is the same ARM926EJ-S
+# (unai GPU, ari64 dynarec).
+pcsx_rearmed_FLAGS += platform=miyoo
+
 bluemsx_NAME = blueMSX
 bluemsx_ROM_DIR = MSX
 bluemsx_PAK_NAME = MSX (blueMSX)
