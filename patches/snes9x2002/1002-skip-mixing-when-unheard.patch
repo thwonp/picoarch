@@ -1,0 +1,18 @@
+--- a/libretro/libretro.c
++++ b/libretro/libretro.c
+@@ -347,6 +347,15 @@
+    {
+       available_frames          += 1;
+       audio_samples_accumulator -= 1.0f;
++   }
++
++   /* A frontend that throws the sound away (its device handed to a music
++    * player) says so here: mixing is a large part of a frame on slow CPUs,
++    * and the SPC700 runs on without it. */
++   {
++      int av = 3;
++      if (environ_cb(RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE, &av) && !(av & 2))
++         return;
+    }
+ 
+    if (audio_low_pass_enabled)
