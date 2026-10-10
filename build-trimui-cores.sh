@@ -16,7 +16,7 @@ for c; do
 	make "$c" platform=trimui
 	[ "$c" = picodrive ] && [ ! -f picodrive/cpu/cyclone/Cyclone.s ] &&
 		CC=gcc CXX=g++ CFLAGS=-O2 CXXFLAGS=-O2 LDFLAGS= \
-			make -C picodrive/cpu/cyclone CONFIG_FILE=../cyclone_config.h
+			make -C picodrive/cpu/cyclone CONFIG_FILE=../cyclone_config.h HAVE_ARMv6=0
 	sos="$sos ${c}_libretro.so"
 done
 docker run --rm -e LD_LIBRARY_PATH=/sdk/hostlib -v "$PWD":/w -v "$SDK":/sdk:ro -w /w tortos-toolchain sh -c "
