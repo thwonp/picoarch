@@ -104,11 +104,6 @@ static const struct core_override_option pcsx_rearmed_core_option_overrides[] = 
 		.info = "If disabled, turns off the dithering pattern the PSX applies to combat color banding.",
 	},
 	{
-		.key = "pcsx_rearmed_duping_enable",
-		.desc = "Frame Duping",
-		.info = "When enabled, provides a small performance improvement by repeating the previous frame if the core has nothing new to display.",
-	},
-	{
 		.key = "pcsx_rearmed_show_gpu_peops_settings",
 		.desc = "P.E.Op.S. Settings",
 	},
@@ -166,19 +161,6 @@ static const struct core_override_option pcsx_rearmed_core_option_overrides[] = 
 		.desc = "Fast Lighting",
 	},
 	{
-		.key = "pcsx_rearmed_gpu_unai_ilace_force",
-		.desc = "Forced Interlace",
-	},
-	{
-		.key = "pcsx_rearmed_gpu_unai_pixel_skip",
-		.desc = "Pixel Skip",
-	},
-	{
-		.key = "pcsx_rearmed_gpu_unai_scale_hires",
-		.desc = "Hi-Res Scaling",
-		.default_value = "enabled"
-	},
-	{
 		.key = "pcsx_rearmed_gpu_slow_llists",
 		.desc = "Slow Linked Lists",
 	},
@@ -211,24 +193,6 @@ static const struct core_override_option pcsx_rearmed_core_option_overrides[] = 
 		.key = "pcsx_rearmed_spu_reverb",
 		.desc = "Reverb Effects",
 		.info = "Enable emulation of the PSX reverb feature. Disable to improve performance at the expense of reduced audio quality/authenticity.",
-	},
-	{
-		.key = "pcsx_rearmed_pe2_fix",
-		.desc = "PE 2/VH 1/2 Fix",
-		.info = "Fixes Parasite Eve 2 / Vandal Hearts 1 / 2."
-	},
-	{
-		.key = "pcsx_rearmed_inuyasha_fix",
-		.desc = "InuYasha Battle Fix",
-	},
-	{
-		.key = "pcsx_rearmed_async_cd",
-		.desc = "CD Access (Restart)",
-		.info = "Method used to read data from disk. 'Asynchronous' can reduce stuttering on devices with slow storage. 'Precache' loads disk image into memory (CHD only)."
-	},
-	{
-		.key = "pcsx_rearmed_spuirq",
-		.desc = "SPU IRQ Always",
 	},
 	{
 		.key = "pcsx_rearmed_nosmccheck",

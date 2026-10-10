@@ -103,6 +103,7 @@ mednafen_wswan_REPO = https://github.com/libretro/beetle-wswan-libretro
 mednafen_wswan_REVISION = 4b01295838ea89e3f1355bbe4cb5cf98aa6108cd
 mednafen_wswan_TYPES = ws,wsc,pc2
 
+pcsx_rearmed_REVISION = c8816799b50388e61cfe237fe2cdbb7d8175f20a
 pcsx_rearmed_MAKEFILE = Makefile.libretro
 pcsx_rearmed_TYPES = bin,cue,img,mdf,pbp,toc,cbn,m3u,chd
 
