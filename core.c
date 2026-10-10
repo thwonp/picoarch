@@ -56,14 +56,14 @@ void config_file_name(char *buf, size_t len, config_type config_type)
 	if (config_type == CONFIG_TYPE_AUTO) {
 		snprintf(buf, len, "%s%s", config_dir, "picoarch-auto.cfg");
 	} else if (config_type == CONFIG_TYPE_GAME && content) {
-		content_based_name(content, buf, len, save_dir, NULL, ".cfg");
+		content_based_name(content, buf, len, config_dir, NULL, ".cfg");
 	} else {
 		snprintf(buf, len, "%s%s", config_dir, "picoarch.cfg");
 	}
 }
 
 void save_relative_path(char *buf, size_t len, const char *basename) {
-	snprintf(buf, len, "%s%s", save_dir, basename);
+	snprintf(buf, len, "%s%s", config_dir, basename);
 }
 
 void sram_write(void) {
@@ -416,6 +416,19 @@ static void set_directories(const char *core_name) {
 		PA_FATAL("Can't find system directory\n");
 	}
 #endif  /* MINUI */
+#ifdef PLORPOS
+	/* plorpOS: the game's saves - battery, states, the power key's autosave
+	 * and the core's own files - in the folder the launcher names
+	 * (Saves/<console>/, as on plorpOS's other devices); settings, cheats
+	 * and screenshots stay in config_dir. */
+	{
+		const char *saves = getenv("PLORPOS_SAVES");
+		if (saves && *saves) {
+			snprintf(save_dir, MAX_PATH, "%s/", saves);
+			mkdir(save_dir, 0755);
+		}
+	}
+#endif
 	PA_INFO("Config dir: %s\n", config_dir);
 	PA_INFO("Save dir: %s\n", save_dir);
 	PA_INFO("System dir: %s\n", system_dir);
@@ -759,7 +772,7 @@ int core_load_content(struct content *content) {
 		goto finish;
 	}
 
-	content_based_name(content, cheats_path, sizeof(cheats_path), save_dir, "cheats/", ".cht");
+	content_based_name(content, cheats_path, sizeof(cheats_path), config_dir, "cheats/", ".cht");
 	if (cheats_path[0] != '\0') {
 		cheats = cheats_load(cheats_path);
 		core_apply_cheats(cheats);
