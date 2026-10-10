@@ -442,8 +442,21 @@ static void set_directories(const char *core_name) {
 	PA_INFO("System dir: %s\n", system_dir);
 }
 
+/* The core's own picture rotation, quarter turns CLOCKWISE (libretro sends
+ * them counter-clockwise): vertical arcade games, upright on the screen.
+ * The "Screen rotation" option turns it further. */
+int core_rotation = 0;
+
 static bool pa_environment(unsigned cmd, void *data) {
 	switch(cmd) {
+	case RETRO_ENVIRONMENT_SET_ROTATION: { /* 1 */
+		const unsigned *rot = (const unsigned *)data;
+		if (!rot)
+			return false;
+		core_rotation = (4 - (*rot & 3)) & 3;
+		PA_INFO("Core rotation: %u (counter-clockwise quarter turns)\n", *rot);
+		break;
+	}
 	case RETRO_ENVIRONMENT_GET_OVERSCAN: { /* 2 */
 		bool *out = (bool *)data;
 		if (out)

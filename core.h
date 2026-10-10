@@ -37,6 +37,7 @@ extern struct content *content;
 extern struct cheats *cheats;
 
 extern double sample_rate;
+extern int core_rotation;
 extern double frame_rate;
 extern double aspect_ratio;
 extern unsigned audio_buffer_size_override;

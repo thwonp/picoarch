@@ -832,8 +832,11 @@ void scale(unsigned w, unsigned h, size_t pitch, const void *src, void *dst)
 		prev.w = w; prev.h = h; prev.pitch = pitch;
 	}
 
+	/* The core's rotation (vertical arcade games), then the user's. */
+	int rotation = (rotate_display + core_rotation) & 3;
+
 	// ---- Normal (non-rotated) rendering ----
-	if (!rotate_display) {
+	if (!rotation) {
 		// If requested, clear whole framebuffer once to avoid residues from previous modes/zooms.
 		if (need_full_clear) {
 			memset(dst, 0, (size_t)SCREEN_PITCH * (size_t)SCREEN_HEIGHT);
@@ -847,7 +850,7 @@ void scale(unsigned w, unsigned h, size_t pitch, const void *src, void *dst)
 	}
 
 	// ----- Rotated rendering -----
-	if (rotate_display != 0) {
+	if (rotation != 0) {
 		/* allocate tmpbuf with the actual framebuffer stride (bytes per line) to match scalers */
 		size_t needed = (size_t)SCREEN_PITCH * (size_t)SCREEN_HEIGHT; /* bytes */
 		if (tmp_size < needed) {
@@ -869,7 +872,7 @@ void scale(unsigned w, unsigned h, size_t pitch, const void *src, void *dst)
 		scaler(w, h, pitch, src, tmpbuf);
 
 		/* Step 2 : apply selected rotation. tmpbuf uses SCREEN_PITCH stride so rotation functions must read with that stride. */
-		switch (rotate_display) {
+		switch (rotation) {
 			case 1: // 90° CW
 				rotate_90cw(SCREEN_WIDTH, SCREEN_HEIGHT, (const uint16_t *)tmpbuf, (uint16_t *)dst);
 				break;
