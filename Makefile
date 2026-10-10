@@ -83,6 +83,8 @@ gpsp_REVISION = 5819380c2ffb0900219d700a382ee68c464ebb99
 gpsp_TYPES = gba,bin,zip
 
 mame2000_REPO = https://github.com/libretro/mame2000-libretro
+mame2000_REVISION = 181b42e5da0d2f0c7a2e59244f23633ed594de2e
+mame2000_FLAGS = USE_CYCLONE=1 USE_DRZ80=1 OPTIMIZE="-Ofast -DNDEBUG -fomit-frame-pointer -mtune=cortex-a7"
 mame2000_TYPES = zip
 
 mame2003_plus_REPO = https://github.com/libretro/mame2003-plus-libretro

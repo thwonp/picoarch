@@ -35,6 +35,7 @@ static const struct core_override_option mame2000_core_option_overrides[] = {
 	},
 	{
 		.key = "mame2000-stereo",
+		.default_value = "disabled",
 		.retro_var_value = "Stereo (Restart); disabled|enabled"
 	},
 	{ NULL }

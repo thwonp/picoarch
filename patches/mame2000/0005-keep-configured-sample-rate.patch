@@ -1,0 +1,17 @@
+--- a/src/mame.c	2026-10-09 22:26:54.258630255 -0400
++++ b/src/mame.c	2026-10-09 22:27:03.704842376 -0400
+@@ -207,11 +207,9 @@
+ 	 * is then only a hint for the games where this can't apply (no
+ 	 * fixed-rate source, more than one distinct fixed rate, or a
+ 	 * source whose rate is decided at runtime). */
+-	{
+-		int fixed_rate = game_fixed_output_rate();
+-		if (fixed_rate > 0)
+-			Machine->sample_rate = fixed_rate;
+-	}
++	/* plorpOS (RG Nano): keep the configured rate. Mixing every source at
++	 * e.g. the YM2151's ~55.9 kHz costs a single Cortex-A7 ~2.5x the audio
++	 * work per frame, and picoarch resamples it down again anyway. */
+ 
+ 	/* get orientation right */
+ 	Machine->orientation = gamedrv->flags & ORIENTATION_MASK;
