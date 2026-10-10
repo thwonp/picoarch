@@ -428,6 +428,14 @@ static void set_directories(const char *core_name) {
 			mkdir(save_dir, 0755);
 		}
 	}
+	/* ... and the BIOS files in the folder it names (Bios/, loose). */
+	{
+		const char *bios = getenv("PLORPOS_BIOS");
+		if (bios && *bios) {
+			snprintf(system_dir, MAX_PATH, "%s", bios);
+			mkdir(system_dir, 0755);
+		}
+	}
 #endif
 	PA_INFO("Config dir: %s\n", config_dir);
 	PA_INFO("Save dir: %s\n", save_dir);
