@@ -6,6 +6,9 @@
 
 int menu_init(void);
 void menu_loop(void);
+#ifdef TRIMUI
+void menu_loop_options_only(void);
+#endif
 int menu_select_core(void);
 int menu_select_content(char *filename, size_t len);
 void menu_begin(void);

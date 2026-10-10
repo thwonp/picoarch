@@ -14,7 +14,7 @@ S=/sdk/usr/arm-buildroot-linux-gnueabi/sysroot
 SDLC="-I$S/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT"
 SDLL="-L$S/usr/lib -lSDL -lpthread"
 make picoarch platform=trimui CROSS_COMPILE=$X \
-	CFLAGS="$SDLC -mcpu=arm926ej-s -mtune=arm926ej-s -fno-PIC -DCONTENT_DIR='\"/mnt/SDCARD/Roms\"' -DPLORPOS -DPICO_HOME_DIR='\"/.picoarch/\"' -Ofast -DNDEBUG -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -fdata-sections -ffunction-sections -I./ -I./libretro-common/include/ -DREVISION=\\\"$(git rev-parse --short HEAD 2>/dev/null || echo trimui)\\\"" \
-	LDFLAGS="$SDLL -lc -ldl -lgcc -lm -lSDL -lasound -lpng -lz -Wl,--gc-sections -fno-PIC" \
+	CFLAGS="$SDLC -mcpu=arm926ej-s -mtune=arm926ej-s -fno-PIC -DCONTENT_DIR='\"/mnt/SDCARD/Roms\"' -DPLORPOS -DTRIMUI -DPICO_HOME_DIR='\"/.picoarch/\"' -Ofast -DNDEBUG -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -fdata-sections -ffunction-sections -I./ -I./libretro-common/include/ -DREVISION=\\\"$(git rev-parse --short HEAD 2>/dev/null || echo trimui)\\\"" \
+	LDFLAGS="$SDLL -lSDL_ttf -lc -ldl -lgcc -lm -lSDL -lasound -lpng -lz -Wl,--gc-sections -fno-PIC" \
 	SDL_INCLUDES="$SDLC" SDL_LIBS="$SDLL"
 ${X}strip picoarch

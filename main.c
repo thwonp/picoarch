@@ -32,6 +32,11 @@ char save_template_path[MAX_PATH];
 bool should_suspend = false;
 #endif
 
+#ifdef TRIMUI
+#include <SDL/SDL.h>
+#include "trimui_menu.h"
+#endif
+
 bool in_menu = false;
 bool should_quit = false;
 unsigned current_audio_buffer_size;
@@ -433,6 +438,21 @@ static void perform_emu_action(void) {
 			SDL_Event sdlevent;
 			sdlevent.type = SDL_KEYUP;
 			sdlevent.key.keysym.sym = SDLK_q;
+			SDL_PushEvent(&sdlevent);
+		}
+#elif defined(TRIMUI)
+		{
+			int r = trimui_menu();
+
+			if (r == TRIMUI_MENU_OPTIONS)
+				menu_loop_options_only();
+			else if (r == TRIMUI_MENU_QUIT)
+				should_quit = 1;
+
+			/* The menu took MENU's release, if it saw one. */
+			SDL_Event sdlevent;
+			sdlevent.type = SDL_KEYUP;
+			sdlevent.key.keysym.sym = SDLK_ESCAPE;
 			SDL_PushEvent(&sdlevent);
 		}
 #else

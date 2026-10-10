@@ -1007,6 +1007,24 @@ void menu_loop(void)
 	plat_video_menu_leave();
 }
 
+#ifdef TRIMUI
+/* Only the Options page, for plorpOS's in-game menu (trimui_menu.c), which
+ * has the rest of the main menu's rows itself. */
+void menu_loop_options_only(void)
+{
+	plat_video_menu_enter(1);
+	me_enable(e_menu_options, MA_OPT_CORE_OPTS, core_options.visible_len > 0);
+	menu_loop_options(0, 0);
+
+	/* wait until menu, ok, back is released */
+	while (in_menu_wait_any(NULL, 50) & (PBTN_MENU|PBTN_MOK|PBTN_MBACK))
+		;
+
+	plat_video_set_msg(NULL, 0, 0);
+	plat_video_menu_leave();
+}
+#endif
+
 int menu_init(void)
 {
 	menu_init_base();
