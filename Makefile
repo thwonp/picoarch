@@ -55,6 +55,7 @@ fake-08_REPO = https://github.com/jtothebell/fake-08
 fake-08_BUILD_PATH = fake-08/platform/libretro
 fake-08_MAKEFILE = Makefile
 fake-08_CORE = fake08_libretro.so
+fake-08_REVISION = 814991a2571ad3970e386cef48f3b148aa1c27b9
 fake-08_TYPES = p8,png
 
 fbalpha2012_REVISION = 0ce31536bef3162fe7e69ff5f555334ec4913cef
